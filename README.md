@@ -9,10 +9,11 @@ The hardware consists of
 * Hoverboard, $0-? (I got mine for $30)
 * Brushless Motor Speed Controller BLDC Driver Board with Hall (15A 500W DC12V-36V), $12
 * ESP32 Development Board, $9
+* Power supply (DC36V 10A 360W AC85-265V), $23
 * Large bucket
 * MDF + Scrap wood
 
-Total cost: $36 (assuming you have the last two items on the list)
+Total cost: $59 (assuming you have the last two items on the list)
 
 
 ## Whishlist
