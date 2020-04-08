@@ -10,7 +10,7 @@ The hardware consists of
 * Brushless Motor Speed Controller BLDC Driver Board with Hall (15A 500W DC12V-36V), $12
 * ESP32 Development Board, $9
 * Power supply (DC36V 10A 360W AC85-265V), $23
-* Potentiometer for pedal, $1
+* Potentiometer for pedal (I used a 50k PTV09A-4025F-B503), $1
 * Large bucket
 * MDF + Scrap wood
 
