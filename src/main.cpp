@@ -15,7 +15,9 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
-#define POT_PIN 36
+#define POT_PIN A0
+#define PWM_PIN D4
+#define RPM_PIN D1
 
 int prev_x = 0;
 int speed = 16; // pixels per second
@@ -25,18 +27,27 @@ volatile bool update_text = true;
 volatile float rpm = 0.0;
 volatile int pot = 0;
 volatile int prev_pot = 0;
+volatile int rpm_count = 0;
+int update_rpm_count = 0;
+int rpm_timestamp = 0;
 
 
 void updateText();
 void drawAnimation();
 int readPot();
+ICACHE_RAM_ATTR void rpmISR();
+
 
 void setup() {
   Serial.begin(115200);
   Serial.println(F("DREJA setup"));
   
-  pinMode (LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(POT_PIN, INPUT);
+  pinMode(RPM_PIN, INPUT);//INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(RPM_PIN), rpmISR, FALLING);
+  pinMode(PWM_PIN, OUTPUT);
+  analogWriteFreq(10000);
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC)) {
@@ -69,8 +80,18 @@ void loop() {
   if (pot != prev_pot) {
     Serial.print("Pot: ");
     Serial.println(pot);
+    analogWrite(PWM_PIN, pot);
     update_text = true;
     prev_pot = pot;
+  }
+
+  if (++update_rpm_count >= 20) {
+    float time = float(millis() - rpm_timestamp) / 1000.0;
+    rpm = ((float)(60*rpm_count)) / 45.0 * 1.0/time; // find out actual numbers for hoverboard signal
+    rpm_timestamp = millis();
+    rpm_count = 0;
+    update_rpm_count = 0;
+    update_text = true;
   }
 
   drawAnimation();
@@ -101,7 +122,6 @@ void updateText() {
 }
 
 void drawAnimation() {
-  
   int now = millis();
   if (prev_timestamp < 0) {
     prev_timestamp = millis();
@@ -132,3 +152,6 @@ int readPot() {
   return val / 10;
 }
 
+void rpmISR() {
+  rpm_count ++;
+}
