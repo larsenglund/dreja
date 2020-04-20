@@ -7,17 +7,40 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 // Declaration for SSD1306 display connected using software SPI (default case):
+/*
 #define OLED_MOSI  D7
 #define OLED_CLK   D5
 #define OLED_DC    D2
 #define OLED_CS    D8
 #define OLED_RESET D3
+*/
+#define OLED_MOSI  18
+#define OLED_CLK   19
+#define OLED_DC    16
+#define OLED_CS    23
+#define OLED_RESET 17
+/*
+orange-white: 5V (from motor controller)
+orange:       GND (from motor controller)
+green-white:  EL
+green:        Signal
+blue-white:   V/R
+blue:         Z/F
+brown-white:  3.3V (from ESP devboard)
+brown:        TMP36 analog signal
+*/
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
+/*
 #define POT_PIN A0
 #define PWM_PIN D4
 #define RPM_PIN D1
+*/
+#define POT_PIN 36
+#define PWM_PIN 26
+#define RPM_PIN 27
+#define DAC_PIN 25
 
 int prev_x = 0;
 int speed = 16; // pixels per second
@@ -47,7 +70,9 @@ void setup() {
   pinMode(RPM_PIN, INPUT);//INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), rpmISR, FALLING);
   pinMode(PWM_PIN, OUTPUT);
-  analogWriteFreq(10000);
+  //analogWriteFreq(10000);
+  ledcSetup(0, 10000, 12);
+  ledcAttachPin(PWM_PIN, 0);
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC)) {
@@ -80,7 +105,8 @@ void loop() {
   if (pot != prev_pot) {
     Serial.print("Pot: ");
     Serial.println(pot);
-    analogWrite(PWM_PIN, pot);
+    //analogWrite(PWM_PIN, pot);
+    ledcWrite(0, pot);
     update_text = true;
     prev_pot = pot;
   }
