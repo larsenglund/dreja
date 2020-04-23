@@ -27,6 +27,18 @@ First the motor is extracted from the hoverboard
 ![Hoverboard3](docs/images/IMG_20200306_113407_result.jpg)
 ![Hoverboard4](docs/images/IMG_20200306_115041_result.jpg)
 
+### QS-909 JYQD
+Low cost brushless motor driver with direction and speed control
+12~36V, 500W (with heat sink) (http://grauonline.de/wordpress/?page_id=3122)
+
+Pin description
+* 5v       5v output
+* EL       Motor enable input (5v)
+* Signal   speedometer output
+* Z/F      forward/reverse control (5v/GND)
+* VR       speed control (0..5v)
+* GND      ground
+
 # Software
 Software for the ESP32 is created with PlatformIO and allow speed control via a foot pedal. The ESP also serves up a captive portal that's used for remote monitoring and control.
 
